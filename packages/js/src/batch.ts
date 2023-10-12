@@ -1,4 +1,5 @@
 import { IngestOptions, IngestStatus } from './client.js';
+import safeStringify from './safeStringify.js';
 
 export type IngestFunction = (
   id: string,
@@ -58,7 +59,19 @@ export class Batch {
       return;
     }
 
-    const res = await this.ingestFn(this.id, events, this.options);
+    let res;
+    try {
+      res = await this.ingestFn(this.id, events, this.options);
+    } catch (error) {
+      const msg = `Got error when trying to send logs to axiom: ${error instanceof Error && error.message}`;
+      console.log(msg);
+      const msgWithPayload = `Failed log payload: ${safeStringify(events)}`;
+      console.log(msgWithPayload);
+
+      await this.ingestFn(this.id, { _time: Date.now(), level: 'error', msg }, this.options).catch();
+      await this.ingestFn(this.id, { _time: Date.now(), level: 'error', msg: msgWithPayload }, this.options).catch();
+    }
+
     this.lastFlush = new Date();
     return res;
   };
