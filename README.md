@@ -1,3 +1,7 @@
+### This fork fixes crashes (https://github.com/axiomhq/axiom-js/issues/64)
+
+---
+
 ![axiom-js: The official javascript bindings for the Axiom API](.github/images/banner-dark.svg#gh-dark-mode-only)
 ![axiom-js: The official javascript bindings for the Axiom API](.github/images/banner-light.svg#gh-light-mode-only)
 
